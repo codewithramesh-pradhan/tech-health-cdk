@@ -7,23 +7,23 @@ import { CognitoAuth } from './constructs/cognito-auth';
 import { WAFProtection } from './constructs/waf-protection';
 import { Monitoring } from './constructs/monitoring';
 
-export interface TechHealthStackProps extends cdk.StackProps {
+export interface TechHealthCdkStackProps extends cdk.StackProps {
   alertEmail?: string;
   enableWaf?: boolean;
   enableMonitoring?: boolean;
 }
 
-export class TechHealthStack extends cdk.Stack {
+export class TechHealthCdkStack extends cdk.Stack {
   public readonly apiEndpoint: string;
   public readonly userPoolId: string;
   public readonly userPoolClientId: string;
 
-  constructor(scope: Construct, id: string, props: TechHealthStackProps = {}) {
+  constructor(scope: Construct, id: string, props: TechHealthCdkStackProps = {}) {
     super(scope, id, props);
 
     // Default configuration
     const config = {
-      alertEmail: props.alertEmail || process.env.ALERT_EMAIL || 'admin@example.com',
+      alertEmail: props.alertEmail || process.env.ALERT_EMAIL || 'admin@techhealth.com',
       enableWaf: props.enableWaf ?? true,
       enableMonitoring: props.enableMonitoring ?? true,
     };
@@ -95,3 +95,6 @@ export class TechHealthStack extends cdk.Stack {
     });
   }
 }
+
+// Keep backward compatibility with the original class name
+export { TechHealthCdkStack as TechHealthStack };

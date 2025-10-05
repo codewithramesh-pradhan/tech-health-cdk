@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { TechHealthStack } from '../lib/tech-health-stack';
+import { TechHealthCdkStack } from '../lib/tech-health-cdk-stack';
 
 const app = new cdk.App();
 
@@ -11,10 +11,13 @@ const env = {
   region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
 };
 
-// Create the main stack
-new TechHealthStack(app, 'TechHealthStack', {
+// Create the main stack with GitHub naming but enhanced functionality
+new TechHealthCdkStack(app, 'TechHealthCdkStack', {
   env,
   description: 'HIPAA-compliant healthcare API infrastructure',
+  alertEmail: process.env.ALERT_EMAIL,
+  enableWaf: true,
+  enableMonitoring: true,
   tags: {
     Project: 'TechHealth',
     Environment: process.env.ENVIRONMENT || 'dev',
