@@ -37,6 +37,273 @@ The **Tech Health CDK** is a production-ready, HIPAA-compliant healthcare API in
 ![Security Architecture](generated-diagrams/tech-health-security.png)
 *Figure 3: Security-focused view showing HIPAA compliance controls and threat mitigation*
 
+## 📸 Screenshots & Validation Guide
+
+### Infrastructure Deployment Screenshots
+
+#### 1. CloudFormation Stack Status
+![CloudFormation Stack](screenshots/cloudformation-techhealthcdkstack.png)
+*Screenshot 1: Successful CloudFormation deployment showing all resources created*
+
+**Validation Checklist:**
+- ✅ Stack Status: `CREATE_COMPLETE` or `UPDATE_COMPLETE`
+- ✅ All 15+ resources created successfully
+- ✅ No failed resources or rollback events
+- ✅ Outputs tab populated with API endpoint and resource IDs
+
+**Expected Configuration:**
+```
+Stack Name: TechHealthCdkStack
+Status: CREATE_COMPLETE
+Resources: 15-20 resources successfully deployed
+Outputs: ApiEndpoint, UserPoolId, UserPoolClientId, KMSKeyId
+```
+
+#### 2. API Gateway Configuration
+![API Gateway](screenshots/API-endpoint-url.png)
+*Screenshot 2: API Gateway showing REST API configuration and endpoints*
+
+**Validation Checklist:**
+- ✅ REST API name: "Tech Health Patient API"
+- ✅ Resources: `/patients`, `/patients/{patientId}`, `/patients/{patientId}/records`
+- ✅ Methods: GET, POST, PUT, DELETE configured
+- ✅ CORS enabled for cross-origin requests
+- ✅ CloudWatch logging activated
+
+**Expected Configuration:**
+```
+API Name: Tech Health Patient API
+Stage: prod
+Resources: 3 main resources with 7 methods
+Throttling: 10,000 requests per second
+```
+
+#### 3. Lambda Functions
+![Lambda Functions](screenshots/lambda-functions.png)
+*Screenshot 3: Lambda functions showing runtime configuration and environment variables*
+
+**Validation Checklist:**
+- ✅ Function name: `TechHealthCdkStack-PatientHandler-XXXXX`
+- ✅ Runtime: Node.js 18.x
+- ✅ Timeout: 30 seconds
+- ✅ Memory: 512 MB
+- ✅ Environment variables: 4 variables set
+- ✅ IAM role with appropriate permissions
+
+**Expected Environment Variables:**
+```
+PATIENT_TABLE_NAME: TechHealthCdkStack-PatientRecords-XXXXX
+AUDIT_TABLE_NAME: TechHealthCdkStack-AuditTrail-XXXXX
+KMS_KEY_ID: arn:aws:kms:region:account:key/key-id
+LOG_GROUP_NAME: /aws/lambda/TechHealthCdkStack-PatientHandler-XXXXX
+```
+
+#### 4. DynamoDB Tables
+![DynamoDB Tables](screenshots/dynamodb-table.png)
+*Screenshot 4: DynamoDB tables with encryption and backup configuration*
+
+**Validation Checklist:**
+- ✅ Two tables created: PatientRecords and AuditTrail
+- ✅ Encryption: Customer managed (KMS)
+- ✅ Billing mode: On-demand
+- ✅ Point-in-time recovery: Enabled
+- ✅ Global Secondary Index on PatientRecords table
+
+**Expected Table Schema:**
+```
+PatientRecords Table:
+- Partition Key: patientId (String)
+- Sort Key: recordType (String)
+- GSI: DateIndex (recordType, createdAt)
+- Encryption: Customer-managed KMS
+
+AuditTrail Table:
+- Partition Key: auditId (String)
+- Sort Key: timestamp (String)
+- Encryption: Customer-managed KMS
+```
+
+#### 5. Point-in-Time Recovery
+![Database Recovery](screenshots/database-point-in-time-reovery.png)
+*Screenshot 5: DynamoDB point-in-time recovery configuration for data protection*
+
+**Validation Checklist:**
+- ✅ Continuous backups enabled
+- ✅ 35-day retention period
+- ✅ Recovery granularity to the second
+- ✅ Cross-region backup capability
+
+### Security Configuration Screenshots
+
+#### 6. WAF Protection Rules
+![WAF Rules](screenshots/WAF-protection-rules.png)
+*Screenshot 6: AWS WAF showing security rules and protection mechanisms*
+
+**Validation Checklist:**
+- ✅ Web ACL name: Contains "TechHealth"
+- ✅ Scope: Regional
+- ✅ Default action: Allow
+- ✅ Rules: 3-4 rules configured
+- ✅ Associated resource: API Gateway stage
+- ✅ CloudWatch metrics enabled
+
+**Expected Rules:**
+```
+1. RateLimitRule: 2000 requests/5min per IP
+2. AWSManagedRulesCommonRuleSet: OWASP Top 10
+3. AWSManagedRulesKnownBadInputsRuleSet: Malicious inputs
+4. GeoBlockingRule: Optional country blocking
+```
+
+#### 7. IAM Roles and Policies
+![IAM Roles](screenshots/iam-roles-latest.png)
+*Screenshot 7: IAM roles showing least privilege access configuration*
+
+**Validation Checklist:**
+- ✅ Lambda execution roles created
+- ✅ Least privilege permissions applied
+- ✅ Resource-specific access policies
+- ✅ No overly permissive policies
+
+### Monitoring & Logging Screenshots
+
+#### 8. CloudWatch Monitoring
+![CloudWatch](screenshots/cloudwatch.png)
+*Screenshot 8: CloudWatch dashboard showing system metrics and performance*
+
+**Validation Checklist:**
+- ✅ Custom dashboards configured
+- ✅ API Gateway metrics displayed
+- ✅ Lambda performance metrics
+- ✅ DynamoDB capacity metrics
+
+#### 9. CloudWatch Alarms
+![CloudWatch Alarms](screenshots/tech-health-alarms.png)
+*Screenshot 9: CloudWatch alarms for proactive monitoring and alerting*
+
+**Validation Checklist:**
+- ✅ 5-8 alarms created
+- ✅ All alarms in "OK" state initially
+- ✅ SNS topic configured for notifications
+- ✅ Proper thresholds set for each alarm
+- ✅ Actions configured (SNS notifications)
+
+**Expected Alarms:**
+```
+- API-HighErrorRate: >5% error rate
+- Lambda-HighErrors: >1% error rate  
+- API-HighLatency: >2000ms response time
+- DynamoDB-Throttling: Any throttling events
+- Auth-FailedLogins: >10 failures/minute
+```
+
+#### 10. CloudWatch Logs
+![CloudWatch Logs](screenshots/cloudwatch-logs.png)
+*Screenshot 10: Comprehensive logging for audit and troubleshooting*
+
+**Validation Checklist:**
+- ✅ API Gateway request logs
+- ✅ Lambda execution logs
+- ✅ Error tracking and analysis
+- ✅ Log retention policies configured
+
+#### 11. SNS Notifications
+![SNS Topics](screenshots/SNS.png)
+*Screenshot 11: SNS topics configured for real-time alerting*
+
+**Validation Checklist:**
+- ✅ SNS topic created for alerts
+- ✅ Email subscription configured
+- ✅ Subscription confirmed
+- ✅ Topic policy allows CloudWatch to publish
+- ✅ Encryption enabled (optional)
+
+### Compliance & Audit Screenshots
+
+#### 12. CloudTrail Events
+![CloudTrail](screenshots/cloudtrails-events.png)
+*Screenshot 12: CloudTrail showing comprehensive audit logging*
+
+**Validation Checklist:**
+- ✅ All API calls logged
+- ✅ User activities tracked
+- ✅ Resource changes recorded
+- ✅ Log integrity maintained
+- ✅ Proper retention policy set
+
+**Expected Log Events:**
+```
+- CreateUser events
+- API Gateway requests
+- DynamoDB operations
+- KMS key usage
+- IAM role assumptions
+```
+
+#### 13. Patient Record Sample
+![Patient Records](screenshots/dynamodb-patient-record.png)
+*Screenshot 13: Sample patient record showing data structure and encryption*
+
+**Validation Checklist:**
+- ✅ Proper data structure implemented
+- ✅ Encryption at rest verified
+- ✅ Audit fields populated
+- ✅ No sensitive data exposed in logs
+
+### Deployment Process Screenshots
+
+#### 14. CDK Deployment
+![CDK Deploy](screenshots/cdk-deploy.png)
+*Screenshot 14: CDK deployment process showing successful infrastructure creation*
+
+**Validation Checklist:**
+- ✅ CDK synthesis successful
+- ✅ CloudFormation deployment completed
+- ✅ All resources created without errors
+- ✅ Stack outputs generated correctly
+
+#### 15. Stack Resources
+![Stack Resources](screenshots/tech-health-stack-resources.png)
+*Screenshot 15: Complete list of deployed AWS resources*
+
+**Validation Checklist:**
+- ✅ All expected resources present
+- ✅ Resource naming conventions followed
+- ✅ No failed resource creation
+- ✅ Dependencies resolved correctly
+
+### Additional Validation Screenshots
+
+#### 16. Log Streams
+![Log Streams](screenshots/logstreams.png)
+*Screenshot 16: CloudWatch log streams showing detailed execution logs*
+
+**Validation Checklist:**
+- ✅ Lambda function logs streaming
+- ✅ API Gateway access logs
+- ✅ Error logs properly formatted
+- ✅ No sensitive data in logs
+
+#### 17. CloudFront Web Application (Optional)
+![CloudFront](screenshots/cloudfront-webapplication.png)
+*Screenshot 17: CloudFront distribution for web application hosting (if applicable)*
+
+**Validation Checklist:**
+- ✅ CloudFront distribution configured
+- ✅ SSL certificate applied
+- ✅ Origin configured correctly
+- ✅ Caching policies set
+
+#### 18. S3 Web Hosting (Optional)
+![S3 Web](screenshots/S3-tech-health-web.png)
+*Screenshot 18: S3 bucket configured for static web hosting (if applicable)*
+
+**Validation Checklist:**
+- ✅ S3 bucket configured for web hosting
+- ✅ Public access properly configured
+- ✅ Index document set
+- ✅ Error document configured
+
 ## 🔧 Key Components
 
 ### 1. Authentication & Authorization Layer
