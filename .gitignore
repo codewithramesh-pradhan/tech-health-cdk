@@ -47,14 +47,15 @@ coverage/
 *.key
 secrets.json
 
-# Large files
-screenshots/
-generated-diagrams/
-*.png
-*.jpg
-*.jpeg
-
 # Temporary files
 *.tmp
 *.temp
 *~
+
+# Build artifacts
+dist/
+build/
+
+# Allow essential documentation images
+!generated-diagrams/*.png
+!screenshots/README.md

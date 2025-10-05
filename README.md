@@ -12,6 +12,15 @@ A production-ready, HIPAA-compliant healthcare API infrastructure built with AWS
 - **CloudWatch** for monitoring and alerting
 - **KMS** for encryption key management
 
+### Architecture Diagrams
+
+![Architecture Overview](generated-diagrams/tech-health-architecture.png)
+
+View all architecture diagrams in the [generated-diagrams](generated-diagrams/) directory:
+- **Main Architecture**: Complete system overview
+- **Data Flow**: Security controls and encryption flow
+- **Security Architecture**: HIPAA compliance and threat mitigation
+
 ## 🚀 Quick Start
 
 ```bash
@@ -69,9 +78,19 @@ This infrastructure implements HIPAA technical safeguards:
 │   └── tech-health-cdk-stack.ts
 ├── lambda/                 # Lambda function code
 ├── test/                   # Unit tests
-├── docs/                   # Documentation
+├── docs/                   # Detailed documentation
+├── generated-diagrams/     # Architecture diagrams
+├── screenshots/            # Validation screenshots
 └── package.json
 ```
+
+## 📖 Documentation
+
+- **[Complete Project Documentation](PROJECT_DOCUMENTATION.md)** - Comprehensive guide with architecture, security, and deployment details
+- **[API Documentation](docs/API_DOCUMENTATION.md)** - Complete API reference
+- **[Architecture Guide](docs/ARCHITECTURE.md)** - Technical architecture details
+- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - Step-by-step deployment instructions
+- **[Screenshots Guide](screenshots/README.md)** - Validation screenshots guide
 
 ## 📄 License
 
